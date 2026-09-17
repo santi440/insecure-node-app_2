@@ -42,18 +42,17 @@ jobs:
       - name: Fallar si hay high/critical
         run: npm audit --audit-level=high
 
-  secrets:
-    runs-on: ubuntu-22.04
+  scan:
+    name: gitleaks
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - uses: gitleaks/gitleaks-action@v2
+      - uses: gitleaks/gitleaks-action@v3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITLEAKS_ENABLE_SUMMARY: false
-        with:
-          args: detect --source . --no-git -v --redact --exit-code=2 ## quiero que mire todo el fs, no solo los ult cambios
+
   trivy:
       runs-on: ubuntu-22.04
       permissions:

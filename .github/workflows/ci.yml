@@ -1,5 +1,5 @@
 name: CI
-on: [push, pull_request,workflow_dispatch]
+on: [push, pull_request]
 
 jobs:
   test:
@@ -43,15 +43,17 @@ jobs:
         run: npm audit --audit-level=high
 
   scan:
-    name: gitleaks
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-      - uses: gitleaks/gitleaks-action@v3
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      name: gitleaks
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v4
+          with:
+            fetch-depth: 0
+
+        - name: Escaneo completo del historial con Gitleaks
+          uses: docker://zricethezav/gitleaks:latest
+          with:
+            args: detect -v --source /github/workspace
 
   trivy:
       runs-on: ubuntu-22.04

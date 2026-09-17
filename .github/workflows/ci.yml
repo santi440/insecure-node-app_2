@@ -43,33 +43,33 @@ jobs:
         run: npm audit --audit-level=high
 
   gitleaks:
-      name: Scan for secrets
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout repository
-          uses: actions/checkout@v4
-          with:
-            fetch-depth: 0
+    name: Scan for secrets
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
-        - name: Run Gitleaks
-          uses: gitleaks/gitleaks-action@v2
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Run Gitleaks (full history scan)
+        uses: docker://zricethezav/gitleaks:latest
+        with:
+          args: detect --source . -v --redact --exit-code 1
 
   trivy:
-      runs-on: ubuntu-22.04
-      permissions:
-        contents: read
-        security-events: write
-      steps:
-        - uses: actions/checkout@v4
-        - uses: aquasecurity/trivy-action@v0.36.0
-          with:
-            scan-type: 'fs'
-            scan-ref: '.'
-            format: 'sarif'
-            output: 'trivy-results.sarif'
-            severity: 'HIGH,CRITICAL'
-        - uses: github/codeql-action/upload-sarif@v4
-          with:
-            sarif_file: 'trivy-results.sarif'
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'HIGH,CRITICAL'
+      - uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: 'trivy-results.sarif'

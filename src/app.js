@@ -1,13 +1,16 @@
 const express = require('express');
 const app = express();
 
-const API_KEY = 'ghp_a1b2c3d4e5f6g7h8i9j0klmnopqrstuvwx12';
-const extraVar = 'Esta variable ya no se usa, pero alguien olvidó borrarla!'
+const API_KEY = process.env.API_KEY;
+
+if (!API_KEY) {
+  console.error('Falta la variable de entorno API_KEY');
+  process.exit(1);
+}
 
 app.use(express.json());
 
 app.get('/', (req, res) => {
-  console.log('Solicitud recibida');
   res.send('API Insegura funcionando');
 });
 

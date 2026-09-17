@@ -60,7 +60,14 @@ jobs:
           gitleaks version
 
       - name: Run Gitleaks (full history scan)
-        run: gitleaks detect --source . -v --redact --exit-code 1
+        run: gitleaks detect --source . -v --exit-code 1 --report-format json --report-path gitleaks-report.json
+
+      - name: Upload Gitleaks report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gitleaks-report
+          path: gitleaks-report.json
 
   trivy:
     runs-on: ubuntu-22.04

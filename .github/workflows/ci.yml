@@ -42,18 +42,19 @@ jobs:
       - name: Fallar si hay high/critical
         run: npm audit --audit-level=high
 
-  scan:
-      name: gitleaks
+  gitleaks:
+      name: Scan for secrets
       runs-on: ubuntu-latest
       steps:
-        - uses: actions/checkout@v4
+        - name: Checkout repository
+          uses: actions/checkout@v4
           with:
             fetch-depth: 0
 
-        - name: Escaneo completo del historial con Gitleaks
-          uses: docker://zricethezav/gitleaks:latest
-          with:
-            args: detect -v --source /github/workspace
+        - name: Run Gitleaks
+          uses: gitleaks/gitleaks-action@v2
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   trivy:
       runs-on: ubuntu-22.04

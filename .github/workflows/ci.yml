@@ -51,7 +51,9 @@ jobs:
       - uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+          GITLEAKS_ENABLE_SUMMARY: false
+        with:
+          args: detect --source . --no-git -v --redact --exit-code=2 ## quiero que mire todo el fs, no solo los ult cambios
   trivy:
       runs-on: ubuntu-22.04
       permissions:
